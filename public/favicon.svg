@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3730A3" />
+      <stop offset="100%" stop-color="#0EA5E9" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Chat bubble icon -->
+  <path d="M30 10C19.5066 10 11 18.5066 11 29C11 33.9734 13.0737 38.5178 16.4803 41.9244L13.0737 50L21.1493 46.5934C23.9178 47.8553 26.8882 48.5 30 48.5C40.4934 48.5 49 39.9934 49 29.5C49 19.0066 40.4934 10 30 10Z" fill="url(#logoGradient)"/>
+  
+  <!-- Connection dots -->
+  <circle cx="22" cy="29" r="3" fill="white"/>
+  <circle cx="30" cy="29" r="3" fill="white"/>
+  <circle cx="38" cy="29" r="3" fill="white"/>
+</svg>
