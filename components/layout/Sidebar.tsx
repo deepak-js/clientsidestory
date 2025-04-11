@@ -8,7 +8,9 @@ import {
   FileText,
   Settings,
   Users,
-  CreditCard
+  CreditCard,
+  Link as LinkIcon,
+  MessageSquare
 } from 'lucide-react'
 
 interface NavItem {
@@ -30,6 +32,16 @@ export default function Sidebar() {
       title: 'Profile',
       href: '/dashboard/profile',
       icon: <UserCircle className="h-5 w-5" />,
+    },
+    {
+      title: 'Links',
+      href: '/dashboard/links',
+      icon: <LinkIcon className="h-5 w-5" />,
+    },
+    {
+      title: 'Messages',
+      href: '/dashboard/messages',
+      icon: <MessageSquare className="h-5 w-5" />,
     },
     {
       title: 'Clients',

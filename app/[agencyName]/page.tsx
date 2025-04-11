@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { Testimonial } from '@/lib/utils/profile-server'
+import { Link as LinkType } from '@/lib/utils/links'
 import { createColorVariables } from '@/lib/utils/color-utils'
 import { generateAllStructuredData } from '@/lib/utils/structured-data'
 import Image from 'next/image'
@@ -8,6 +9,7 @@ import { notFound } from 'next/navigation'
 import JsonLd from '@/components/seo/JsonLd'
 import ShareButtons from '@/components/social/ShareButtons'
 import ContactForm from '@/components/contact/ContactForm'
+import PublicLinkDisplay from '@/components/links/PublicLinkDisplay'
 
 // Fetch user profile data from the database
 async function getUserProfile(slug: string) {
@@ -54,6 +56,39 @@ async function getUserProfile(slug: string) {
       // Continue execution even if testimonials fail to load
     }
 
+    // Fetch links for this user
+    let links = []
+    try {
+      const now = new Date().toISOString()
+
+      const { data: linksData, error: linksError } = await supabase
+        .from('links')
+        .select(`
+          *,
+          link_categories (name, icon)
+        `)
+        .eq('user_id', data.id)
+        .eq('is_visible', true)
+        .or(`start_date.is.null,start_date.lte.${now}`)
+        .or(`end_date.is.null,end_date.gte.${now}`)
+        .order('display_order', { ascending: true })
+
+      if (linksError) {
+        console.error('Error fetching links:', linksError)
+      } else {
+        // Transform the data to include category_name
+        links = (linksData || []).map(link => ({
+          ...link,
+          category_name: link.link_categories ? link.link_categories.name : null,
+          category_icon: link.link_categories ? link.link_categories.icon : null,
+          link_categories: undefined // Remove the nested object
+        }))
+      }
+    } catch (linksException) {
+      console.error('Exception fetching links:', linksException)
+      // Continue execution even if links fail to load
+    }
+
     // Track profile view
     try {
       // Increment profile_views counter
@@ -66,7 +101,7 @@ async function getUserProfile(slug: string) {
       // Continue execution even if view tracking fails
     }
 
-    // Use real data for core profile, metrics, testimonials, and customization
+    // Use real data for core profile, metrics, testimonials, links, and customization
     return {
       id: data.id,
       username: slug,
@@ -85,6 +120,8 @@ async function getUserProfile(slug: string) {
         storiesPublished: data.stories_published || 0,
         completionRate: data.completion_rate || 0
       },
+      // Links with proper error handling
+      links: links || [],
       // Testimonials with proper error handling
       testimonials: testimonials.length > 0 ? testimonials.map(t => ({
         id: t.id,
@@ -223,6 +260,37 @@ export default async function ProfilePage(props: { params: { agencyName: string 
             )}
           </div>
         </div>
+
+        {/* Social Links Section - Displayed directly under profile info */}
+        {profile.links && profile.links.filter(link =>
+          link.title.match(/facebook|twitter|instagram|linkedin|youtube|tiktok|website/i)
+        ).length > 0 && (
+          <div className="mb-8">
+            <PublicLinkDisplay
+              links={profile.links.filter(link =>
+                link.title.match(/facebook|twitter|instagram|linkedin|youtube|tiktok|website/i)
+              )}
+              accentColor={profile.accentColor}
+              userId={profile.id}
+            />
+          </div>
+        )}
+
+        {/* Other Links Section */}
+        {profile.links && profile.links.filter(link =>
+          !link.title.match(/facebook|twitter|instagram|linkedin|youtube|tiktok|website/i)
+        ).length > 0 && (
+          <div className="mb-16">
+            <h2 className="mb-6 text-center text-xl font-semibold text-gray-900">Links</h2>
+            <PublicLinkDisplay
+              links={profile.links.filter(link =>
+                !link.title.match(/facebook|twitter|instagram|linkedin|youtube|tiktok|website/i)
+              )}
+              accentColor={profile.accentColor}
+              userId={profile.id}
+            />
+          </div>
+        )}
 
         {/* Success Metrics */}
         <div className="mb-16 rounded-xl p-8 shadow-sm" style={{ backgroundColor: 'var(--accent-color-light)' }}>

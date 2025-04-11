@@ -134,6 +134,16 @@ export default async function Dashboard(props: {}) {
         </div>
 
         <div className="rounded-lg border p-6 shadow-sm">
+          <h3 className="mb-2 text-lg font-medium">Links</h3>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Manage your profile links and categories
+          </p>
+          <Link href="/dashboard/links" className="rounded bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90">
+            Manage Links
+          </Link>
+        </div>
+
+        <div className="rounded-lg border p-6 shadow-sm">
           <h3 className="mb-2 text-lg font-medium">Messages</h3>
           <p className="mb-4 text-sm text-muted-foreground">
             View and respond to messages from your profile visitors
